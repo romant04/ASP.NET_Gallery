@@ -1,0 +1,70 @@
+﻿@import url("constants.css");
+
+.uploadFormContainer {
+    margin-top: 2em;
+    width: 50vw;
+}
+
+.uploadForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+}
+
+.uploadInput {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+.uploadFormGroup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadFileInput {
+    display: none;
+}
+
+.uploadFileLabel:hover {
+    background: var(--primary-dark-color);
+}
+
+.floatingLabel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: gray;
+    transition: all .5s ease;
+}
+
+.uploadInput:focus + label {
+    color: var(--primary-color);
+}
+.uploadInput:focus {
+    border-color: var(--primary-color);
+}
+
+.prg {
+    background: #d9d9d9;
+    width: 400px;
+    display: none;
+}
+.prg > div {
+    background: var(--primary-dark-action-color);
+    color: white;
+    text-align: center;
+}
+.prgWrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    width: max-content;
+}
+.prgWrap p {
+    margin: 0;
+}

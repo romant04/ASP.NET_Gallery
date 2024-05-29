@@ -1,0 +1,77 @@
+﻿@page
+@model Gallery.Pages.EditImageModel
+@using Gallery.Models;
+@{
+    <link rel="stylesheet" href="~/css/upload.css" asp-append-version="true" />
+    <script src="~/js/edit.js" defer></script>
+}
+
+<i id="back" class="fa-solid fa-arrow-left-long backArrow"></i>
+<h1>Edit image</h1>
+<hr />
+<div class="uploadFormContainer">
+    <form class="uploadForm" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Image.Title" class="uploadInput form-control-file" />
+            <label id="Title" asp-for="Image.Title" class="floatingLabel control-label">Title</label>
+            <span asp-validation-for="Image.Title"></span>
+        </div>
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Image.Description" class="uploadInput form-control-file" />
+            <label id="Description" asp-for="Image.Description" class="floatingLabel control-label"></label>
+            <span asp-validation-for="Image.Description"></span>
+        </div>
+        <div class="uploadFormGroup form-group">
+            <label class="control-label">Albums</label>
+            <select asp-for="SelectedAlbumIds" class="selectInput form-control" required>
+                @{
+                    List<int> imageAlbumsIds = new List<int>();
+                    foreach(var x in Model.ImageData.Album){
+                        imageAlbumsIds.Add(x.Id);
+                    }
+                    
+                    foreach (var v in Model.Albums)
+                    {
+                        if(imageAlbumsIds.Contains(v.Id)){
+                            <option value="@v.Id" selected>@v.Title</option>
+                        }
+                        else {
+                            <option value="@v.Id">@v.Title</option>
+                        }
+                    }
+                }
+            }
+            </select>
+            <span asp-validation-for="Albums" class="text-danger"></span>
+        </div>
+        <div class="form-group d-flex align-items-start gap-4">
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Public</label>
+                @if(Model.Image.IsPublic == true)
+                {
+                    <input type="radio" asp-for="Image.IsPublic" value="true" checked="checked" />
+                }
+                else if(Model.Image.IsPublic == false)
+                {
+                    <input type="radio" asp-for="Image.IsPublic" value="true" />
+                }
+            </div>
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Private</label>
+                @if(Model.Image.IsPublic == false)
+                {
+                    <input type="radio" asp-for="Image.IsPublic" value="false" checked="checked" />
+                }
+                else if(Model.Image.IsPublic == true)
+                {
+                    <input type="radio" asp-for="Image.IsPublic" value="false" />
+                }
+            </div>
+        </div>
+        <input type="hidden" asp-for="Albums"/>
+        <div class="form-group">
+            <input type="submit" value="Submit" class="button primary-bg large-width" />
+        </div>
+    </form>
+</div>

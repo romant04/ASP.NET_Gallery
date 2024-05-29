@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav navbar-row">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <i class="fa-solid fa-user user-icon user"></i>
+        <i class="fa-solid fa-caret-up user-icon-arrow user"></i>
+        <div id="user-modal" class="user-modal">
+            <p><b>@User.Identity?.Name</b></p>
+            <a class="navbar-link" asp-page="/User">Manage galleries</a>
+            <a class="navbar-link" asp-page="/UserImages">Manage images</a>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post" >
+                <button class="navbar-signout">Log Out</button>
+            </form>
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="navbar-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register"><button class="navbar-signup">Sign Up</button></a>
+    </li>
+}
+</ul>

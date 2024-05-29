@@ -1,0 +1,41 @@
+﻿@page
+@using Gallery.Models;
+@model Gallery.Pages.EditCoverModel
+@{
+    <link rel="stylesheet" href="~/css/upload.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cover.css" asp-append-version="true" />
+    <script src="~/js/edit.js" defer></script>
+    <script src="~/js/cover.js" defer></script>
+}
+
+<i id="back" class="fa-solid fa-arrow-left-long backArrow"></i>
+<h1>Edit cover image</h1>
+<hr />
+<div class="uploadFormContainer">
+    <form class="uploadForm" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <div class="EditBox">
+            @{
+            foreach(var v in Model.StoredFiles)
+            {
+                List<Thumbnail> thumbnails = new List<Thumbnail>();
+                foreach (var x in v.Thumbnails)
+                {
+                    thumbnails.Add(x);
+                }
+                var encodedImage = String.Format("data:{0};base64, {1}", v.ContentType, Convert.ToBase64String(thumbnails[0].Blob));
+                 <label class="InputBox">
+                        <input asp-for="SelectedCoverId" type="radio" value="@v.Id">
+                        <div class="imgBox">
+                            <img src="@encodedImage" />
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                 </label>
+            }
+            }
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Submit" class="button primary-bg large-width" />
+        </div>
+    </form>
+</div>

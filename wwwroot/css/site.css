@@ -1,0 +1,224 @@
+@import url("constants.css");
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* =========================
+    reusable simple styles 
+   ========================= */
+
+/* --- sizes ---- */
+.large-width {
+    width: var(--large-button-width);
+}
+.small-width {
+    width: var(--small-button-width);
+}
+/* --- colors --- */
+.primary-bg {
+    background: var(--primary-color);
+}
+.primary-bg:hover {
+    background: var(--primary-action-color)
+}
+.primary-dark-bg {
+    background: var(--primary-dark-color);
+}
+.primary-dark-bg:hover {
+    background: var(--primary-dark-action-color);
+}
+
+.secondary-bg {
+    background: var(--secondary-color);
+}
+.secondary-bg:hover {
+    background: var(--secondary-action-color);
+}
+.secondary-dark-bg {
+    background: var(--secondary-dark-color);
+}
+.secondary-dark-bg:hover {
+    background: var(--secondary-dark-action-color);
+}
+
+.danger-bg {
+    background: var(--danger-color);
+}
+.danger-bg:hover {
+    background: var(--danger-action-color);
+}
+/* --- basic button with icon capability ---*/
+.button {
+    padding-block: var(--large-button-py);
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+.button i {
+    margin-left: .5em;
+}
+
+/* =========================
+            layout 
+   ========================= */
+header {
+    position: relative;
+    z-index: 100;
+}
+header nav {
+    background: var(--primary-dark-color);
+}
+header nav * {
+    color: white !important;
+}
+
+.navbar-link {
+    text-decoration: none;
+    color: black;
+    position: relative;
+}
+.navbar-link:hover {
+    color: black;
+}
+
+.navbar-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: all 0.25s ease;
+}
+.navbar-link:hover::after {
+    width: 100%;
+}
+
+.navbar-signup {
+    width: 6em;
+    background: var(--secondary-color);
+    padding-block: 0.25em;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+.navbar-signup:hover {
+    background: var(--secondary-action-color);
+}
+
+.navbar-signout {
+    width: 6em;
+    background: var(--primary-color);
+    padding-block: 0.25em;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+.navbar-signout:hover {
+    background: var(--primary-action-color);
+}
+
+.navbar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    text-align: center;
+    position: relative;
+}
+
+.user-icon {
+    font-size: 1.35rem;
+    cursor: pointer;
+}
+.user-icon-arrow {
+    cursor: pointer;
+}
+
+.user-modal {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+    position: absolute;
+    background: var(--secondary-dark-color);
+    padding-block: 2em;
+    border-radius: 5px;
+    padding-inline: 2em;
+    z-index: 999;
+    right: 0;
+    width: max-content;
+}
+.user-modal a {
+    white-space: nowrap;
+}
+.user-modal a::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: white;
+    transition: all 0.25s ease;
+}
+.user-modal a:hover::after {
+    width: 100%;
+}
+.user-modal a {
+    width: min-content;
+}
+
+.backArrow {
+    font-size: 1.5rem;
+    margin-bottom: .5em;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+.backArrow:hover {
+    color: var(--primary-action-color);
+}
+
+.privateImg {
+    position: relative;
+    width: 100%;
+    height: 45%;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.privateImg p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.3rem;
+}
+.privateImg img {
+    filter: brightness(6%);
+    width: 100%;
+    height: 100%;
+}

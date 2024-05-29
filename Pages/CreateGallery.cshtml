@@ -1,0 +1,37 @@
+﻿@page
+@model Gallery.Pages.CreateGalleryModel
+@{
+    <link rel="stylesheet" href="~/css/upload.css" asp-append-version="true" />
+    <script src="~/js/edit.js" defer></script>
+}
+
+<i id="back" class="fa-solid fa-arrow-left-long backArrow"></i>
+<h1>Adding new gallery</h1>
+<hr />
+<div class="uploadFormContainer">
+    <form class="uploadForm" method="post" enctype="multipart/form-data">
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="InAlbum.Title" class="uploadInput form-control-file" />
+            <label id="Title" asp-for="InAlbum.Title" class="floatingLabel control-label">Title</label>
+            <span asp-validation-for="InAlbum.Title"></span>
+        </div>
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="InAlbum.Description" class="uploadInput form-control-file" />
+            <label id="Description" asp-for="InAlbum.Description" class="floatingLabel control-label"></label>
+            <span asp-validation-for="InAlbum.Description"></span>
+        </div>
+        <div class="form-group d-flex align-items-start gap-4">
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Public</label>
+                <input type="radio" asp-for="InAlbum.IsPublic" value="true" />
+            </div>
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Private</label>
+                <input type="radio" asp-for="InAlbum.IsPublic" value="false"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Upload" class="button primary-bg large-width" />
+        </div>
+    </form>
+</div>

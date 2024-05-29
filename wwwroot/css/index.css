@@ -1,0 +1,284 @@
+﻿@import url("constants.css");
+
+.gallery {
+    display: grid;
+    gap: 2em;
+    row-gap: 2em;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    grid-auto-rows: 320px;
+    grid-auto-flow: dense;
+}
+
+.title {
+    margin-top: max(70vh, 500px);
+}
+.subtitle {
+    margin-top: 3em;
+}
+
+.galleryA {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+
+.galleryItem {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.galleryItem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galleryItem:hover .imgInfo {
+    display: flex;
+    opacity: 1;
+}
+
+.galleryItem:hover .imgInfo > * {
+    transform: translateY(0);
+}
+
+.imgInfo {
+    position: absolute;
+    bottom: 0;
+    padding-block: .65em;
+    background: rgba(255, 255, 255, 0.75);
+    width: 100%;
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+}
+
+    .imgInfo > * {
+        transition: all 0.5s ease-out;
+        transform: translateY(25px);
+    }
+
+.galleryImg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.galleryCount {
+    position: absolute;
+    top: 5%;
+    right: 10px;
+    z-index: 100;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: black;
+}
+.galleryCount * {
+    margin: 0;
+}
+
+.emptyGallery {
+    position: relative;
+    border: 1px solid black;
+    border-radius: 10px;
+    justify-content: center;
+}
+.emptyGallery i {
+    position: absolute;
+    top: 5%;
+    right: 20px;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.emptyGallery i:hover {
+    color: var(--primary-action-color);
+}
+
+.emptyGallery .fa-pen-to-square{
+    right: 55px;
+}
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    position: absolute;
+    top: 2.5%;
+    right: 4%;
+    background: rgba(255, 255, 255, 1);
+    padding: .25em;
+    border-radius: 100%;
+}
+
+.close-a {
+    color: rgb(230, 27, 24);
+    transition: all 0.2s ease;
+}
+
+    .close-a:hover {
+        color: rgb(0, 0, 0)
+    }
+
+/* ==============
+     image modal 
+   =============== */
+.chooseModalCont {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chooseModal {
+    position: relative;
+    background-color: white;
+    width: 80vw;
+    height: 90vh;
+    border-radius: 10px;
+}
+
+    .chooseModal > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px 10px 0 0;
+    }
+
+.imageInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    text-align: center;
+    padding-inline: 1.5em;
+    background: #ffffffad;
+}
+.imageInfo h3 {
+    padding-top: 1em;
+}
+.imageInfo .rg, .lf {
+    position: absolute;
+    top: 50%;
+    transform: translateY(50%);
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+.imageInfo .rg:hover, .lf:hover {
+    color: var(--primary-action-color);
+}
+.imageInfo .rg {
+    right: 50px;
+}
+.imageInfo .lf {
+    left: 50px;
+}
+
+.actions {
+    width: max(300px, 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2.5em;
+    flex-direction: row;
+    margin-inline: auto;
+    flex-wrap: wrap;
+    gap: 1.5em;
+}
+.actions button {
+    width: 15em;
+}
+
+@media only screen and (max-width: 900px) {
+    .actions button {
+        font-size: 1.1em;
+    }
+}
+
+@media only screen and (max-height: 850px) {
+    .actions {
+        gap: .5em;
+        margin-top: 1em;
+    }
+}
+
+/* =================
+      intro screen 
+   ================= */
+.introImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 70vh;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.intro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: max(70vh, 500px);
+    padding-inline: 10%;
+    padding-top: 10em;
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.intro::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+    opacity: 0.75;
+    z-index: -1;
+}
+
+.intro h1 {
+    color: white;
+    font-size: 2.5rem;
+}
+.intro button {
+    width: 12em;
+    height: 3em;
+    font-size: 1.25rem;
+}
+
+@media only screen and (min-width: 1600px) {
+    .intro {
+        padding-inline: 18%;
+    }
+}
+
+.no-img {
+    margin-top: 70vh;
+}

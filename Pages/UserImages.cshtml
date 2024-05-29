@@ -1,0 +1,103 @@
+﻿@page
+@using Gallery.Models
+@model Gallery.Pages.UserImagesModel
+@{
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+    <script src="~/js/main.js" defer></script>
+    <script src="~/js/position.js" defer></script>
+}
+
+@{
+    if(Model.ShowUserModal)
+    {
+        <div class="chooseModalCont" id="modal">
+            <i class="fa-solid fa-xmark"></i>
+            <div class="chooseModal">
+            @if(Model.Images.Where(f => f.Id == Guid.Parse(Model.ChosenImage)).SingleOrDefault() == null){
+                <h3 class="text-danger m-5">Access denied, the image you are trying to access isn't yours and it's private</h3>
+            }
+            else{
+                var chosenImage = Model.Images.Where(f => f.Id == Guid.Parse(Model.ChosenImage)).SingleOrDefault();
+
+                List<Thumbnail> thumbnails = new List<Thumbnail>();
+                foreach(var x in chosenImage.Thumbnails)
+                {
+                    thumbnails.Add(x);
+                }
+                var encodedImage = String.Format("data:{0};base64, {1}", chosenImage.ContentType, Convert.ToBase64String(thumbnails[1].Blob));
+                <img src="@encodedImage" />
+                <div class="imageInfo">
+                    <h3>@chosenImage.Title</h3>
+                    <p>@chosenImage.Description</p>
+                    <hr />
+                    <p>Uploaded at @chosenImage.UploadedAt.ToShortDateString() by  @chosenImage.Uploader.UserName</p>
+                    <div class="actions">
+                        <a asp-page-handler="download" asp-route-filename="@chosenImage.Id"><button class="button primary-bg">Donwload <i class="fa-solid fa-download"></i></button></a>
+                        <a asp-page-handler="thumbnail" asp-route-filename="@chosenImage.Id" asp-route-type="1"><button class="button primary-bg">Show full image <i class="fa-solid fa-up-right-and-down-left-from-center"></i></button></a>
+                        <a asp-page="EditImage" asp-route-id="@chosenImage.Id"><button class="button primary-bg">Edit image <i class="fa-solid fa-pen-to-square"></i></button></a>
+                        <a asp-page-handler="EditPosition" asp-route-id="@chosenImage.Id"><button class="button primary-bg">Edit image position <i class="fa-solid fa-up-right-from-square"></i></button></a>
+                        <a asp-page-handler="delete" asp-route-filename="@chosenImage.Id"><button class="button danger-bg">Delete image<i class="fa-solid fa-trash"></i></button></a>
+                    </div>
+                </div>
+            } 
+            </div>
+        </div>
+    }
+}
+
+<div class="container">
+    <a asp-page="Upload"><button class="button primary-bg large-width mb-4 mt-1">Add new image</button></a>
+    
+    <h1>Manage images</h1>
+    @if (!(Model.Images.Count > 0))
+    {
+        <h4 class="text-danger">No images were found in your account.</h4>
+    }
+    <div class="gallery mt-3">
+        <input id="imageCount" type="hidden" value="@Model.Images.Count"/>
+        @foreach (var v in Model.Images)
+        {
+            var isMine = v.Position.SingleOrDefault(f => f.UserId == Guid.Parse(Model.UserId));
+            if (isMine != null)
+            {
+                <div class="galleryItem" data-id="@v.Id" style="grid-row: @(isMine.row > 0 ? isMine.row : 0); grid-column:  @(isMine.column > 0 ? isMine.column : 0); order: @(isMine.order > 0 ? isMine.order - Model.Images.Count : 0)">
+                    <a class="galleryA" asp-page-handler="ShowImage" asp-route-id="@v.Id"></a>
+                    <div class="imgInfo">
+                        <h4>@v.Title</h4>
+                        <p>@v.Description</p>
+                    </div>
+                    @{
+                        List<Thumbnail> thumbnails = new List<Thumbnail>();
+                        foreach (var x in v.Thumbnails)
+                        {
+                            thumbnails.Add(x);
+                        }
+                        var encodedImage = String.Format("data:{0};base64, {1}", v.ContentType, Convert.ToBase64String(thumbnails[0].Blob));
+
+                        <img src="@encodedImage" />
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="galleryItem" data-id="@v.Id">
+                    <a class="galleryA" asp-page-handler="ShowImage" asp-route-id="@v.Id"></a>
+                    <div class="imgInfo"> 
+                        <h4>@v.Title</h4>
+                        <p>@v.Description</p>
+                    </div>
+                @{
+                    List<Thumbnail> thumbnails = new List<Thumbnail>();
+                    foreach(var x in v.Thumbnails)
+                    {
+                        thumbnails.Add(x);
+                    }
+                    var encodedImage = String.Format("data:{0};base64, {1}", v.ContentType, Convert.ToBase64String(thumbnails[0].Blob));
+            
+                    <img src="@encodedImage" />
+                }
+            </div>
+            }
+        }
+    </div>
+</div>

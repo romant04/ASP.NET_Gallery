@@ -1,0 +1,52 @@
+﻿@page
+@model Gallery.Pages.EditGalleryModel
+@{
+    <link rel="stylesheet" href="~/css/upload.css" asp-append-version="true" />
+    <script src="~/js/edit.js" defer></script>
+}
+
+<i id="back" class="fa-solid fa-arrow-left-long backArrow"></i>
+<h1>Edit gallery</h1>
+<hr />
+<div class="uploadFormContainer">
+    <form class="uploadForm" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Album.Title" class="uploadInput form-control-file" />
+            <label id="Title" asp-for="Album.Title" class="floatingLabel control-label">Title</label>
+            <span asp-validation-for="Album.Title"></span>
+        </div>
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Album.Description" class="uploadInput form-control-file" />
+            <label id="Description" asp-for="Album.Description" class="floatingLabel control-label"></label>
+            <span asp-validation-for="Album.Description"></span>
+        </div>
+        <div class="form-group d-flex align-items-start gap-4">
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Public</label>
+                @if(Model.Album.IsPublic == true)
+                {
+                    <input type="radio" asp-for="Album.IsPublic" value="true" checked="checked" />
+                }
+                else if(Model.Album.IsPublic == false)
+                {
+                    <input type="radio" asp-for="Album.IsPublic" value="true" />
+                }
+            </div>
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Private</label>
+                @if(Model.Album.IsPublic == false)
+                {
+                    <input type="radio" asp-for="Album.IsPublic" value="false" checked="checked" />
+                }
+                else if(Model.Album.IsPublic == true)
+                {
+                    <input type="radio" asp-for="Album.IsPublic" value="false" />
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Submit" class="button primary-bg large-width" />
+        </div>
+    </form>
+</div>

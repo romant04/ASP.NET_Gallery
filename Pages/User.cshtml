@@ -1,0 +1,140 @@
+﻿@page
+@using Gallery.Models
+@model Gallery.Pages.UserModel
+@{
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+    <script src="~/js/main.js" defer></script>
+}
+
+
+@{
+    if(Model.ShowUserModal)
+    {
+    <div class="chooseModalCont" id="modal">
+                <i class="fa-solid fa-xmark"></i>
+                <div class="chooseModal">
+                @if(Model.Albums.Where(f => f.Id == Model.ChosenAlbum).SingleOrDefault() == null)
+            {
+                    <h3 class="text-danger m-5">Access denied, the gallery you are trying to access isn't yours and it's private</h3>
+                }
+                else 
+                {
+                    var chosenAlbum = Model.Albums.Where(f => f.Id == Model.ChosenAlbum).SingleOrDefault();
+                    var filesList = chosenAlbum.Files.OrderBy(f => f.Order.SingleOrDefault(f => f.GalleryId == chosenAlbum.Id).Order);
+                    List<StoredFile> files = new List<StoredFile>();
+                    foreach(var v in filesList)
+                    {
+                        files.Add(v);
+                    }
+
+                    var chosenImage = files[Model.imageId];
+
+                    List<Thumbnail> thumbnails = new List<Thumbnail>();
+                    foreach(var x in chosenImage.Thumbnails)
+                    {
+                        thumbnails.Add(x);
+                    }
+                    var encodedImage = String.Format("data:{0};base64, {1}", chosenImage.ContentType, Convert.ToBase64String(thumbnails[1].Blob));
+                    if(chosenImage.IsPublic)
+                    {
+                        <img src="@encodedImage" />
+                    } 
+                    else
+                    {
+                        <div class="privateImg">
+                            <img class="privateImg" src="@encodedImage" />
+                            <p>This image is private</p>
+                        </div>
+                    }
+                    <div class="imageInfo">
+                        <h3>@chosenAlbum.Title</h3>
+                        <p>@chosenAlbum.Description</p>
+                        <hr />
+                        @{
+                            if(chosenAlbum.Files.Count > 1)
+                            {
+                                <a asp-page-handler="PrevImage" asp-route-id="@chosenAlbum.Id" asp-route-imgId="@Model.imageId"><i class="fa-solid fa-chevron-left lf"></i></a>
+                                <a asp-page-handler="NextImage" asp-route-id="@chosenAlbum.Id" asp-route-imgId="@Model.imageId"><i class="fa-solid fa-chevron-right rg"></i></a>
+                            }
+                        }
+                        <div class="actions">
+                            <a asp-page-handler="ShowImagePage" asp-route-id="@chosenImage.Id"><button class="button primary-bg">Show current image page <i class="fa-solid fa-up-right-from-square"></i></button></a>
+                            <a asp-page-handler="ChangeCover" asp-route-id="@chosenAlbum.Id"><button class="button primary-bg">Change cover image <i class="fa-solid fa-up-right-from-square"></i></button></a>
+                            @if(chosenAlbum.IsDefault == false){
+                                <a asp-page="EditGallery" asp-route-id="@chosenAlbum.Id"><button class="button primary-bg">Edit gallery <i class="fa-solid fa-pen-to-square"></i></button></a>
+                                <a asp-page-handler="delete" asp-route-id="@chosenAlbum.Id"><button class="button danger-bg">Delete album<i class="fa-solid fa-trash"></i></button></a>
+                            }
+                        </div>
+                        <form method="post">
+                            <h6 class="mt-3">Change order</h6>
+                            <input type="hidden" asp-for="EditedFile" value="@chosenImage.Id">
+                            <input type="hidden" asp-for="AlbumEdited" value="@chosenAlbum.Id">
+                            <select asp-for="GalleryOrder">
+                                @{
+                                    for(var i = 1; i <= chosenAlbum.Files.Count; i++)
+                                    {
+                                        <option value="@i" selected="@(i == chosenImage.Order.SingleOrDefault(f => f.GalleryId == chosenAlbum.Id).Order)">@i</option>
+                                    }
+                                }
+                            </select>
+                            <button class="button primary-bg small-width" type="submit">Save</button>
+                        </form>
+                    </div>
+            }
+                </div>
+    </div>
+    }
+}
+
+<div class="container">
+    <a asp-page="CreateGallery"><button class="button primary-bg large-width mb-4 mt-1">Create new gallery</button></a>
+    
+    <h1>Manage galleries</h1>
+    @if (!(Model.Albums.Count > 0))
+    {
+        <h4 class="text-danger">No galleries were found in your account.</h4>
+    }
+    <div class="gallery mt-3">
+        @foreach (var v in Model.Albums)
+        {
+            if(v.CoverImageId != null)
+            {
+                <div class="galleryItem" data-id="@v.Id">
+                <a class="galleryA" asp-page-handler="ShowAlbum" asp-route-id="@v.Id"></a>
+                <div class="imgInfo">
+                    <h4>@v.Title</h4>
+                    <p>@v.Description</p>
+                    <div class="galleryCount">
+                        <p>@v.Files.Count</p>
+                        <i class="fa-solid fa-images"></i>
+                    </div>
+                </div>
+                @{
+                    StoredFile coverImage = Model.StoredFiles.Where(f => f.Id == v.CoverImageId).SingleOrDefault();
+                    List<Thumbnail> thumbnails = new List<Thumbnail>();
+                    foreach(var x in coverImage.Thumbnails)
+                    {
+                        thumbnails.Add(x);
+                    }
+                    var encodedImage = String.Format("data:{0};base64, {1}", coverImage.ContentType, Convert.ToBase64String(thumbnails[0].Blob));
+            
+                        <img src="@encodedImage" />
+                }
+                </div>
+            }
+            else
+            {
+                <div class="d-flex align-items-center flex-column emptyGallery">
+                    @if (v.IsDefault == false)
+                    { 
+                        <a asp-page="EditGallery" asp-route-id="@v.Id"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a asp-page-handler="delete" asp-route-id="@v.Id"><i class="fa-solid fa-trash text-danger"></i></a>
+                    }
+                    <h4>@v.Title</h4>
+                    <p>@v.Description</p>
+                    <p class="text-danger">There are no images in this gallery</p>
+                </div>
+            }
+        }
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿.uploadFormContainer {
+    width: 100%;
+}
+
+.EditBox {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    grid-auto-rows: 320px;
+    gap: 2em;
+    margin-bottom: 2em;
+}
+
+.InputBox input[type=radio] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.InputBox img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.InputBox img:hover {
+    filter: brightness(80%);
+}
+
+.imgBox {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.imgBox i {
+    position: absolute;
+    display: none;
+    color: forestgreen;
+    font-size: 3rem;
+    top: 50%;
+    left: 50%;
+    z-index: 999;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,15 @@
+﻿:root {
+    --primary-color: rgb(67, 8, 154);
+    --primary-action-color: rgb(86, 20, 185);
+    --primary-dark-color: rgb(58, 18, 125);
+    --primary-dark-action-color: rgb(68, 24, 143);
+    --secondary-color: rgb(217, 102, 25);
+    --secondary-action-color: rgb(255, 102, 0);
+    --secondary-dark-color: rgb(215, 103, 36);
+    --secondary-dark-action-color: rgb(234, 105, 28);
+    --danger-color: rgb(163, 8, 8);
+    --danger-action-color: rgb(200, 4, 4);
+    --large-button-width: 12em;
+    --small-button-width: 9em;
+    --large-button-py: .45em;
+}

@@ -1,0 +1,154 @@
+﻿@page
+@using Gallery.Models
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+    <script src="~/js/main.js" defer></script>
+}
+
+@{
+    if(Model.ShowModal)
+    {
+        <div class="chooseModalCont" id="modal">
+            <i class="fa-solid fa-xmark"></i>
+            <div class="chooseModal">
+            @{
+                var chosenImage = Model.StoredFiles.Where(f => f.Id == Guid.Parse(Model.ChosenImage)).SingleOrDefault();
+                List<Thumbnail> thumbnails = new List<Thumbnail>();
+                foreach(var v in chosenImage.Thumbnails)
+                {
+                    thumbnails.Add(v);
+                }
+                var encodedImage = String.Format("data:{0};base64, {1}", chosenImage.ContentType, Convert.ToBase64String(thumbnails[1].Blob));
+                <img src="@encodedImage" />
+            }
+                <div class="imageInfo">
+                    <h3>@chosenImage.Title</h3>
+                    <p>@chosenImage.Description</p>
+                    <hr />
+                    <p>Taken at @chosenImage.DateTaken.ToShortDateString() uploaded by @chosenImage.Uploader.UserName</p>
+                    <p>Original name of file: @chosenImage.OriginalName</p>
+                    <div class="actions">
+                        <a asp-page-handler="download" asp-route-filename="@chosenImage.Id"><button class="button primary-bg">Donwload <i class="fa-solid fa-download"></i></button></a>
+                        <a asp-page-handler="thumbnail" asp-route-filename="@chosenImage.Id" asp-route-type="1"><button class="button primary-bg">Show full image <i class="fa-solid fa-up-right-and-down-left-from-center"></i></button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@{
+    if (Model.ShowUserModal)
+    {
+        <div class="chooseModalCont" id="modal">
+            <i class="fa-solid fa-xmark"></i>
+            <div class="chooseModal">
+                @if (Model.Albums.Where(f => f.Id == Model.ChosenAlbum).SingleOrDefault() == null)
+                {
+                    <h3 class="text-danger m-5">Access denied, the gallery you are trying to access isn't yours and it's private</h3>
+                }
+                else
+                {
+                    var chosenAlbum = Model.Albums.Where(f => f.Id == Model.ChosenAlbum).SingleOrDefault();
+                    var filesList = chosenAlbum.Files.OrderBy(f => f.Order.SingleOrDefault(f => f.GalleryId == chosenAlbum.Id).Order);
+                    List<StoredFile> files = new List<StoredFile>();
+                    foreach (var v in filesList)
+                    {
+                        files.Add(v);
+                    }
+
+                    var chosenImage = files[Model.imageId];
+
+                    List<Thumbnail> thumbnails = new List<Thumbnail>();
+                    foreach (var x in chosenImage.Thumbnails)
+                    {
+                        thumbnails.Add(x);
+                    }
+                    var encodedImage = String.Format("data:{0};base64, {1}", chosenImage.ContentType, Convert.ToBase64String(thumbnails[1].Blob));
+                    <img src="@encodedImage" />
+                    <div class="imageInfo">
+                        <h3>@chosenAlbum.Title</h3>
+                        <p>@chosenAlbum.Description</p>
+                        <hr />
+                        @{
+                            if(chosenAlbum.Files.Count > 1)
+                            {
+                                <a asp-page-handler="PrevImage" asp-route-id="@chosenAlbum.Id" asp-route-imgId="@Model.imageId"><i class="fa-solid fa-chevron-left lf"></i></a>
+                                <a asp-page-handler="NextImage" asp-route-id="@chosenAlbum.Id" asp-route-imgId="@Model.imageId"><i class="fa-solid fa-chevron-right rg"></i></a>
+                            }
+                        }
+                        <div class="actions">
+                            <a asp-page-handler="download" asp-route-filename="@chosenImage.Id"><button class="button primary-bg">Donwload current image <i class="fa-solid fa-download"></i></button></a>
+                            <a asp-page-handler="thumbnail" asp-route-filename="@chosenImage.Id" asp-route-type="1"><button class="button primary-bg">Show current image <i class="fa-solid fa-up-right-and-down-left-from-center"></i></button></a>
+                            <a asp-page-handler="idk" asp-route-who="@chosenImage.Id"><button class="button primary-bg">Current image info <i class="fa-solid fa-circle-info"></i></button></a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+<div class="intro">
+    <h1>The biggest place for uploading <br /> and sharing</h1>
+    <a asp-page="Upload"><button class="button secondary-bg">Upload now</button></a>
+</div>
+<img class="introImage" src="~/images/bg.png" alt="bg" />
+@if (!(Model.Files.Count > 0))
+{
+    <h4 class="text-danger no-img">No public images were found.</h4>
+}
+else
+{
+    <h1 class="title mb-4">Newest public images</h1>
+    <div class="gallery">
+        @foreach (var f in Model.Files)
+        {
+
+            <div class="galleryItem" data-id="@f.Id">
+                <a class="galleryA" asp-page-handler="idk" asp-route-who="@f.Id"></a>
+                <div class="imgInfo">
+                    <h4>@f.Title</h4>
+                    <p>@f.Description</p>
+                    <span>@f.DateTaken</span>
+                </div>
+                <img src="@Url.Page("/Index","Thumbnail", new {filename=f.Id })" class="galleryImg" />
+            </div>
+        }
+    </div>
+
+
+    <h1 class="subtitle mb-4">Newest public galleries</h1>
+    <div class="gallery">
+        @foreach (var v in Model.Albums.Where(f => f.IsPublic == true).ToList())
+        {
+            if (v.CoverImageId != null)
+            {
+                <div class="galleryItem" data-id="@v.Id">
+                    <a class="galleryA" asp-page-handler="ShowAlbum" asp-route-id="@v.Id"></a>
+                    <div class="imgInfo">
+                        <h4>@v.Title</h4>
+                        <p>@v.Description</p>
+                        <div class="galleryCount">
+                            <p>@v.Files.Count</p>
+                            <i class="fa-solid fa-images"></i>
+                        </div>
+                    </div>
+                    @{
+                        StoredFile coverImage = Model.StoredFiles.Where(f => f.Id == v.CoverImageId).SingleOrDefault();
+                        List<Thumbnail> thumbnails = new List<Thumbnail>();
+                        foreach (var x in coverImage.Thumbnails)
+                        {
+                            thumbnails.Add(x);
+                        }
+                        var encodedImage = String.Format("data:{0};base64, {1}", coverImage.ContentType, Convert.ToBase64String(thumbnails[0].Blob));
+
+                        <img src="@encodedImage" />
+                    }
+                </div>
+            }
+        }
+    </div>
+}

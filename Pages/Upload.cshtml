@@ -1,0 +1,121 @@
+﻿@page
+@model Gallery.Pages.UploadModel
+@{
+    <link rel="stylesheet" href="~/css/upload.css" asp-append-version="true" />
+    <script src="~/js/upload.js" defer></script>
+}
+
+<i id="back" class="fa-solid fa-arrow-left-long backArrow"></i>
+<h1>Adding new image</h1>
+<hr />
+<div class="uploadFormContainer">
+    <form class="uploadForm" enctype="multipart/form-data" id="uploadForm">
+        <input type="hidden" asp-for="UserId" id="UserId" />
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Title" class="uploadInput form-control-file" id="title" />
+            <label id="Title" asp-for="Title" class="floatingLabel control-label">Title</label>
+            <span asp-validation-for="Title"></span>
+        </div>
+        <div class="uploadFormGroup form-group">
+            <input type="text" asp-for="Description" class="uploadInput form-control-file" id="desc" />
+            <label id="Description" asp-for="Description" class="floatingLabel control-label"></label>
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Album</label>
+            <select asp-for="SelectedAlbumId" asp-items="Model.Albums" class="selectInput form-control">
+            </select>
+            <span asp-validation-for="SelectedAlbumId" class="text-danger"></span>
+        </div>
+        <div class="form-group d-flex align-items-start gap-4">
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Public</label>
+                <input type="radio" asp-for="IsPublic" value="true" id="public" />
+            </div>
+            <div class="d-flex align-items-center flex-column gap-1">
+                <label>Private</label>
+                <input type="radio" asp-for="IsPublic" value="false"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="uploadFileInput" class="button secondary-bg small-width control-label">Choose file <i class="fa-solid fa-cloud-arrow-up"></i></label>
+            <input id="uploadFileInput" type="file" asp-for="Upload" multiple accept="image/*" class="uploadFileInput form-control-file" required />
+            <span id="selectedFile">No file selected</span>
+        </div>
+        <div class="prgWrap">
+            <div class="prg">
+                <div id="progress" style="width:0%">0</div>
+            </div>
+            <p id="counter"></p>
+        </div>
+        
+        <div class="form-group">
+            <input type="submit" value="Upload" class="button primary-bg large-width" />
+        </div>
+    </form>
+</div>
+
+<script src="./js/tus-min.js"></script>
+<script>
+    const publicI = document.getElementById("public")
+    const descI = document.getElementById("desc")
+    const titleI = document.getElementById("title")
+    const selectI = document.querySelector("select")
+    const userId = document.getElementById("UserId")
+    const progress = document.getElementById("progress")
+    const prg = document.querySelector(".prg")
+    const form = document.getElementById("uploadForm")
+    const counter = document.getElementById("counter")
+
+    console.log(form)
+
+    form.addEventListener("submit", e => {
+        e.preventDefault()
+        let uploads = []
+
+        for (let i = 0; i < uploadFileInput.files.length; i++){
+            let file = uploadFileInput.files[i]
+            // Create a new tus upload
+            let upload = new tus.Upload(file, {
+                endpoint: `${window.location.origin}/files/`,
+                retryDelays: [0, 3000, 5000, 10000, 20000],
+                metadata: {
+                    filename: file.name,
+                    filetype: file.type,
+                    isPublic: publicI.checked ? "jo" : "ne",
+                    title: titleI.value,
+                    description: descI.value,
+                    albumId: selectI.value.toString(),
+                    userId: userId.value,
+                },
+                onError: function (error) {
+                    console.log("Failed because: " + error)
+                },
+                onProgress: function (bytesUploaded, bytesTotal) {
+                    var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+                    prg.style.display = "block";
+                    progress.style.width = percentage + "%"
+                    progress.innerText = percentage + "%"
+                    counter.innerText = `${i + 1} of ${uploadFileInput.files.length}`
+                    console.log(bytesUploaded, bytesTotal, percentage + "%")
+                },
+                onSuccess: function () {
+                    console.log("Download %s from %s", upload.file.name, upload.url)
+                    if (i + 1 < uploadFileInput.files.length) {
+                        uploads[i + 1].start()
+                    }
+                    else {
+                        setTimeout(() => {
+                            window.location.href = "/"
+                        }, 50)
+                    }
+                }
+            })
+
+            uploads.push(upload)
+        }
+
+        // Start the upload
+        uploads[0].start()
+    })
+</script>
